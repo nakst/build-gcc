@@ -56,6 +56,17 @@ jobs:
           asset_name: gcc-i686-elf.tar.xz
           asset_content_type: application/x-compressed
           
+      - name: upload-arm-none-eabi
+        id: upload-arm-none-eabi
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release.outputs.upload_url }}
+          asset_path: ./gcc-arm-none-eabi.tar.xz
+          asset_name: gcc-arm-none-eabi.tar.xz
+          asset_content_type: application/x-compressed
+          
       - name: upload-x86_64-essence
         id: upload-x86_64-essence
         uses: actions/upload-release-asset@v1
