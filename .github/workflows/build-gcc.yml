@@ -29,10 +29,10 @@ jobs:
             nasm            \
             gcc             \
             g++
-
+      
       - name: build
         id: build
-        run: ./build.sh
+        run: chmod +x build.sh && ./build.sh
         
       - name: release
         id: release
