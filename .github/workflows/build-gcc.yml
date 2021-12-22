@@ -1,0 +1,68 @@
+name: build-gcc
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+
+      - name: checkout
+        uses: actions/checkout@v2          
+
+      - name: install dependencies
+        run: |
+          sudo apt-get install --no-install-recommends -y \
+            ca-certificates \
+            libgmp-dev      \
+            libmpc-dev      \
+            libmpfr-dev     \
+            xz-utils        \
+            texinfo         \
+            patch           \
+            make            \
+            curl            \
+            m4              \
+            nasm            \
+            gcc             \
+            g++
+
+      - name: build
+        id: build
+        run: ./build.sh
+        
+      - name: release
+        id: release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: gcc-${{ steps.build.outputs.GCC_VERSION }}
+          release_name: gcc-${{ steps.build.outputs.GCC_VERSION }}
+          body: |
+            GCC v${{ steps.build.outputs.GCC_VERSION }}
+
+      - name: upload-i686-elf
+        id: upload-i686-elf
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release.outputs.upload_url }}
+          asset_path: ./gcc-i686-elf.tar.xz
+          asset_name: gcc-i686-elf.tar.xz
+          asset_content_type: application/x-compressed
+          
+      - name: upload-x86_64-essence
+        id: upload-x86_64-essence
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release.outputs.upload_url }}
+          asset_path: ./gcc-x86_64-essence.tar.xz
+          asset_name: gcc-x86_64-essence.tar.xz
+          asset_content_type: application/x-compressed
