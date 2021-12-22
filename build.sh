@@ -66,38 +66,43 @@ strip --strip-unneeded $PREFIX/bin/$TARGET-* \
 	$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/lto-wrapper
 
 mv $PREFIX prefix
-tar -cJf gcc-x86_64-essence.tar.xz prefix
+tar -cJf gcc-$TARGET.tar.xz prefix
 rm -rf prefix
 
-# ================ i686-elf ================
+# ================ Generic targets ================
+
+GenericTarget() {
+	mkdir build-binutils
+	cd build-binutils
+	../binutils-$BINUTILS_VERSION/configure --target=$TARGET --prefix=$PREFIX --with-sysroot --disable-nls --disable-werror > binutils_configure.txt
+	make -j`nproc` > binutils_make.txt
+	make install > binutils_make_install.txt
+	cd ..
+	rm -rf build-binutils
+	
+	mkdir build-gcc
+	cd build-gcc
+	../gcc-$GCC_VERSION/configure --target=$TARGET --prefix=$PREFIX --disable-nls --without-headers --enable-languages=c,c++ > gcc_configure.txt
+	make all-gcc -j`nproc` > gcc_make_all_gcc.txt
+	make all-target-libgcc -j`nproc` > gcc_make_all_target_libgcc.txt
+	make install-gcc > gcc_make_install_gcc.txt
+	make install-target-libgcc > gcc_make_install_target_libgcc.txt
+	cd ..
+	rm -rf build-gcc
+	
+	strip --strip-unneeded $PREFIX/bin/$TARGET-* \
+		$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/cc1 \
+		$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/cc1plus \
+		$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/collect2 \
+		$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/lto1 \
+		$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/lto-wrapper
+	
+	mv $PREFIX prefix
+	tar -cJf gcc-$TARGET.tar.xz prefix
+	rm -rf prefix
+}
 
 TARGET=i686-elf
-
-mkdir build-binutils
-cd build-binutils
-../binutils-$BINUTILS_VERSION/configure --target=$TARGET --prefix=$PREFIX --with-sysroot --disable-nls --disable-werror > binutils_configure.txt
-make -j`nproc` > binutils_make.txt
-make install > binutils_make_install.txt
-cd ..
-rm -rf build-binutils
-
-mkdir build-gcc
-cd build-gcc
-../gcc-$GCC_VERSION/configure --target=$TARGET --prefix=$PREFIX --disable-nls --without-headers --enable-languages=c,c++ > gcc_configure.txt
-make all-gcc -j`nproc` > gcc_make_all_gcc.txt
-make all-target-libgcc -j`nproc` > gcc_make_all_target_libgcc.txt
-make install-gcc > gcc_make_install_gcc.txt
-make install-target-libgcc > gcc_make_install_target_libgcc.txt
-cd ..
-rm -rf build-gcc
-
-strip --strip-unneeded $PREFIX/bin/$TARGET-* \
-	$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/cc1 \
-	$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/cc1plus \
-	$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/collect2 \
-	$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/lto1 \
-	$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/lto-wrapper
-
-mv $PREFIX prefix
-tar -cJf gcc-i686-elf.tar.xz prefix
-rm -rf prefix
+GenericTarget
+TARGET=arm-none-eabi
+GenericTarget
