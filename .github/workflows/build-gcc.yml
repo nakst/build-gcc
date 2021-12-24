@@ -66,6 +66,17 @@ jobs:
           asset_path: ./gcc-arm-none-eabi.tar.xz
           asset_name: gcc-arm-none-eabi.tar.xz
           asset_content_type: application/x-compressed
+            
+      - name: upload-aarch64-none-elf
+        id: upload-aarch64-none-elf
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release.outputs.upload_url }}
+          asset_path: ./gcc-aarch64-none-elf.tar.xz
+          asset_name: gcc-aarch64-none-elf.tar.xz
+          asset_content_type: application/x-compressed
           
       - name: upload-x86_64-essence
         id: upload-x86_64-essence
