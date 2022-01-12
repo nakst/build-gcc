@@ -89,24 +89,3 @@ jobs:
           asset_name: gcc-x86_64-essence.tar.xz
           asset_content_type: application/x-compressed
 
-      - name: upload-i686-pc-linux-gnu
-        id: upload-i686-pc-linux-gnu
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.release.outputs.upload_url }}
-          asset_path: ./gcc-i686-pc-linux-gnu.tar.xz
-          asset_name: gcc-i686-pc-linux-gnu.tar.xz
-          asset_content_type: application/x-compressed
-
-      - name: upload-x86_64-pc-linux-gnu
-        id: upload-x86_64-pc-linux-gnu
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.release.outputs.upload_url }}
-          asset_path: ./gcc-x86_64-pc-linux-gnu.tar.xz
-          asset_name: gcc-x86_64-pc-linux-gnu.tar.xz
-          asset_content_type: application/x-compressed
