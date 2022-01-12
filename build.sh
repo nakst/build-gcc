@@ -96,3 +96,13 @@ TARGET=arm-none-eabi
 BuildForTarget
 TARGET=aarch64-none-elf
 BuildForTarget
+
+# ================ Linux targets ================
+
+BINUTILS_CONFIGURE_EXTRA=""
+GCC_CONFIGURE_EXTRA=""
+
+TARGET=i686-pc-linux-gnu
+BuildForTarget
+TARGET=x86_64-pc-linux-gnu
+BuildForTarget
