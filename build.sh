@@ -14,6 +14,8 @@ echo "::set-output name=GCC_VERSION::${GCC_VERSION}"
 # ================ Build function ================
 
 BuildForTarget() {
+	echo "Building Binutils for ${TARGET}..."
+
 	mkdir build-binutils
 	cd build-binutils
 	$BINUTILS_SOURCE/configure --target=$TARGET --prefix=$PREFIX $BINUTILS_CONFIGURE_EXTRA --disable-nls --disable-werror > binutils_configure.txt
@@ -21,6 +23,8 @@ BuildForTarget() {
 	make install > binutils_make_install.txt
 	cd ..
 	rm -rf build-binutils
+	
+	echo "Building GCC for ${TARGET}..."
 	
 	mkdir build-gcc
 	cd build-gcc
@@ -42,6 +46,8 @@ BuildForTarget() {
 	cd ..
 	rm -rf build-gcc
 	
+	echo "Finalizing build for ${TARGET}..."
+	
 	strip --strip-unneeded $PREFIX/bin/$TARGET-* \
 		$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/cc1 \
 		$PREFIX/libexec/gcc/$TARGET/$GCC_VERSION/cc1plus \
@@ -52,6 +58,8 @@ BuildForTarget() {
 	mv $PREFIX prefix
 	tar -cJf gcc-$TARGET.tar.xz prefix
 	rm -rf prefix
+	
+	echo "Finished build for ${TARGET}."
 }
 
 # ================ Download sources ================
